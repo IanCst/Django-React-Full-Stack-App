@@ -7,7 +7,7 @@ import "../styles/Form.css"
 function Form(route, method) {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [Loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     const name =method === "login" ? "Login" : "Register"
@@ -22,12 +22,12 @@ function Form(route, method) {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
                 navigate("/")
-            }else {
+            } else {
                 navigate("/login")
             }
         }
         catch (error) {
-            alert(Error)
+            alert(error)
         } finally {
             setLoading(false)
         }
