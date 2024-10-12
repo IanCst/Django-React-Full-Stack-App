@@ -1,40 +1,23 @@
-import react from "react"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import Home from "./pages/Home"
-import NotFound from "./pages/NotFound"
-import ProtectedRoute from "./components/ProtectedRoute"
+import axios from "axios";
+import { ACCESS_TOKEN } from "./constants";
 
-function Logout() {
-  localStorage.clear()
-  return <Navigate to="/login" />
-}
+const apiUrl = "/choreo-apis/awbo/backend/rest-api-be2/v1.0";
 
-function RegisterAndLogout() {
-  localStorage.clear()
-  return <Register />
-}
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
+});
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/register" element={<RegisterAndLogout />} />
-        <Route path="*" element={<NotFound />}></Route>
-      </Routes>
-    </BrowserRouter>
-  )
-}
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-export default App
+export default api;
